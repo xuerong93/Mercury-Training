@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Demo04</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="js/angular.min.js"></script>
+    <script>
+        var app= angular.module("mainApp",[]);
+        app.controller("parentCtrl",["$scope",function($scope){
+            $scope.value= 100;
+            $scope.person = {
+                name: "Alice"
+            };
+            $scope.x=100;
+            $scope.$watch("x", function(newVal,oldVal){
+                console.log("x: ", newVal, oldVal);
+            });
+        }]);
+        app.controller("childCtrl",["$scope",function($scope){
+            $scope.y=10;
+            $scope.$watch("y", function(newVal,oldVal){
+                console.log("y: ", newVal, oldVal);
+            });
+        }]);
+
+       // third party event, attribute directive do not have watch method, should use $digest()
+        app.directive("increasex",function(){
+            return function(scope,elem,attr){
+                elem.on("click", function(){
+                    scope.x++;
+                    console.log("Value of x: "+ scope.x);
+                    //scope.$digest();
+                });
+            }
+        });
+
+        //third party event,  attribute directive do not have watch method, should use $digest()
+        app.directive("increasey",function(){
+            return function(scope,elem,attr){
+                elem.on("click", function(){
+                    scope.y++;
+                    console.log("Value of y: "+ scope.y);
+                    //scope.$digest();                //spend time on it
+                    scope.$apply();  //$digest vs $apply(), $apply ~=$rootScope.$digest(), scope.$apply(callback) could use for filtering
+                });
+
+            }
+        });
+
+    </script>
+</head>
+<body ng-app = "mainApp">
+    <div class="container" ng-controller="parentCtrl">
+        <h1>Scope Hierarchy and Life Cycle</h1>
+        <hr>
+        <h2>Parent Scope and Child Scope</h2>
+        <h3>Inside Parent Scope</h3>
+        <p>Input value: <input type="number" ng-model="value" min="1" max="200"/></p>
+        <p>Get value: {{value}}</p>
+        <p>Input Name: <input type="text" ng-model="person.name"/></p>
+        <p>Get name: {{person.name}}</p>
+        <p>Value of x: {{x}}</p>
+        <button class="btn btn-primary" increasex>Increase X</button>
+
+
+        <div ng-controller="childCtrl">
+            <h3>Inside Child Scope</h3>
+            <!-- to avoid 父子不同步, use   $parent.value-->
+            <p>Input value: <input type="number" ng-model="$parent.value" min="1" max="200"/></p>
+            <p>Get value: {{value}}</p>
+            <p>Input Name: <input type="text" ng-model="person.name"/></p>
+            <p>Get name: {{person.name}}</p>
+            <p>Value of y: {{y}}</p>
+            <button class="btn btn-primary" increasey>Increase Y</button>
+        </div>
+    </div>
+</body>
+</html>

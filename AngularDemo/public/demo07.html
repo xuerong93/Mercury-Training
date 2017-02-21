@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Demo07</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-sanitize.min.js"></script>
+    <script src="js/angular-resource.min.js"></script>
+    <script>
+        var app = angular.module("mainApp",["ngSanitize","ngResource"]);
+        app.controller("mainCtrl",["$scope", "$injector","$resource", function($scope,$injector,$resource){
+            $injector.invoke(function($location,$timeout, $interval){  //$timeout works the same with setTimeout, but setTimeout doesn't work in angular(setTimeout不认scope)
+                $scope.url = $location.absUrl();
+                $timeout(function(){
+                    $scope.delayMsg = "This is a delayed message";
+                },2000);
+                // setTimeout(function(){
+                //     console.log("settimeout message");
+                // },100);
+                $interval(function(){
+                    $scope.currentTime = new Date();
+                },1000);
+            });
+            
+            $scope.boldMsg = "<b>This is a bold message</b>";
+            $injector.invoke(function($sce){
+                $scope.secureMsg = $sce.trustAsHtml($scope.boldMsg);
+            });
+
+            $injector.invoke(function($http){
+                $http.get("/ds").then(function(res){
+                    console.log(res);
+                    $scope.personList = res.data;
+                });
+            });
+            $scope.getCurrentPerson = function(index){
+                $injector.invoke(function($http){
+                    $http.get("/ds/" + index).then(function(res){
+                        $scope.currentPerson = res.data;    //compare with .success
+                    });
+                });
+            };
+
+            $scope.addPerson = function(){
+                $injector.invoke(function($http){
+                    $http.post("/ds",$scope.p).success(function(res){
+                        $scope.personList = res;
+                    });
+                });
+            };
+
+            var data = $resource("/ds",{},{
+                create: {method: "GET"},
+                update: {method: 'PUT', isArray:true}
+            });
+            $scope.getAllPerson = function(){
+                //$injector.invoke(function($resource){
+                    //be care of query, because it is an array, isArray is true, must use query
+                    data.query().$promise.then(function(res){
+                        console.log(res);
+                        $scope.personList2 = res;
+                    });
+                //});
+            };
+            $scope.updatePerson = function(){
+                data.update().$promise.then(function(res){
+                    $scope.personList2 =res;
+                });
+            };
+
+            $scope.getRemoteData = function(){
+                var url ="http://public-api.wordpress.com/rest/v1/sites/wtmpeachtest.wordpress.com/posts?callback=JSON_CALLBACK";
+                $injector.invoke(function($http){
+                    $http.jsonp(url).then(function(res){
+                        $scope.objectList = res.data.posts;
+                    });
+                });
+                
+            };
+        }]);
+
+        
+    </script>
+</head>
+<body ng-app="mainApp">
+    <div class="container" ng-controller="mainCtrl">
+        <h1>Angular Services</h1>
+        <hr>
+        <h2>Service: $location</h2>
+        <p>Current URL: {{url}}</p>
+        <h2>Service: $timeout and $interval</h2>
+        <p>Delayed Message: {{delayMsg}}</p>
+        <p>Current Time: {{currentTime}}</p>
+        <hr>
+        <h2>Service: $sce</h2>
+        <p>Bold message: {{boldMsg}}</p>
+        <p>Bold message by ng-bind-html: <span ng-bind-html="boldMsg"></span></p>
+        <p>Secured Message: <span ng-bind-html="secureMsg"></span></p>
+        <hr>
+        <h2>Service: $http</h2>
+        <div class="row">
+            <div class="col-sm-4">
+                <ul ng-repeat="person in personList">
+                    <li ng-click="getCurrentPerson($index)">{{person.name}}: {{person.city}},{{person.country}}</li>
+                </ul>
+            </div>
+            <div class="col-sm-4" ng-show="currentPerson">
+                <h3>Current Person</h3>
+                <p>Name: {{currentPerson.name}}</p>
+                <p>City: {{currentPerson.city}}</p>
+                <p>Country: {{currentPerson.country}}</p>
+            </div>
+            <div class="col-sm-4">
+                <h3>Add a new Person</h3>  <!--form horizontal 对齐文本框-->
+                <p>Name: <input ng-model="p.name"></p>
+                <p>City: <input ng-model="p.city"></p>
+                <p>Country: <input ng-model="p.country"></p>
+                <button class="btn btn-primary" ng-click="addPerson()">Add</button>
+            </div>
+        </div>
+        <hr>
+        <h2>Service: $resource</h2>
+        <div>
+            <button class="btn btn-primary" ng-click="getAllPerson()">Get All Person</button>
+            <button class="btn btn-primary" ng-click="updatePerson()">Update Person</button>
+            <ul ng-repeat="person in personList2">
+                <li>{{person.name}}: {{person.city}},{{person.country}}</li>
+            </ul>
+        </div>
+        <hr>
+        <h2>Service: $http.jsonp</h2>
+        <p><button ng-click="getRemoteData()" class="btn btn-primary">Get Remote Data</button></p>
+        <ul>
+            <li ng-repeat="object in objectList">{{object.ID}} : {{object.URL}}</li>
+        </ul>
+
+    </div>
+</body>
+</html>

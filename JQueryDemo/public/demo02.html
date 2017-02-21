@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo02</title>
+    <link rel = "stylesheet" href = "css/bootstrap.min.css" type = "text/css">
+    <script src="js/jquery-3.1.0.min.js"></script>
+    <script>
+            //$(document).ready(function(){});
+            var jq = jQuery.noConflict();        //how to prevent naming confliction
+            jq(document).ready(function($){
+                console.log("All DOM are loaded");     //difference between $(document).ready and onload function
+
+                 $("#outer").click(function(event){
+                    display(event);
+                });
+                $("#inner").click(function(event){
+                    display(event);
+                    //event.stopPropagation();
+                    //return false;
+                });
+                //  $("#div").click(function(event){
+                //     display(event);
+                // });
+                
+                //change is defined by ourselves
+                $("#para").on("change",function() {
+                    $(this).text("The paragraph is changed");
+                });
+
+                $("#para").one("read",function() {
+                   console.log("The paragraph is read");
+                });
+                //to invoke the above function
+                $("#btn1").on("click", function(){
+                    $("#para").trigger("change");
+                    $("#para").trigger("read");
+                });
+            });
+            jq(document).ready(function($){
+                console.log("Another DOM is loaded");
+                $("#btn2").on("click",function(){
+                    var h4 = $("h4"); //the jquery object
+                    console.log("Length: "+ h4.length);
+                    var first = h4.eq(0);                    // first is a jquery object
+                    console.log(first.text());
+                    var second = h4[1];                      // second is a DOM object
+                    console.log(second);//<h4>Second Header</h4>
+                    console.log(second.innerHTML);
+                    var third = h4.get(2);                    //third is a DOM object
+                    console.log(third.innerHTML);
+
+
+
+                    var first2 = h4.eq(0);                    // first is a jquery object
+                    console.log("first == first2? "+ (first == first2));
+                    var second2 = h4[1];                      // second is a DOM object
+                    console.log("second == second2? "+ (second == second2));
+                    console.log("h1: " + $("h1")[0].innerHTML);
+
+                    if($("h3").length){                     //verify whether or not an element exists
+                        console.log("h3 exists");
+                    }else{
+                        console.log("h3 does not exist");
+                    }
+                });
+            });
+
+            function display(event){
+                console.log("Event Phase: " + event.eventPhase);
+                console.log("Event Target: " + event.target.id);
+                console.log("Current Target: " + event.currentTarget.id);
+            }
+
+            function load(){
+                console.log("Everything is loaded");
+            }
+    </script>
+    <style>
+        div #outer {
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+
+<body onload="load()">
+    <div class="container" id="div">
+        <h1>JQuery Event Propagation</h1>
+        <hr>
+        <div id="outer" class="text-center">
+            <button id="inner" class="btn btn-default">Click me</button>
+        </div>
+        <hr>
+        <h2>Customized Event</h2>
+        <p id="para">First paragraph</p>
+        <button id="btn1" class="btn btn-primary">Click Me</button>
+        <hr>
+        <iframe src="http://learn.jquery.com" ></iframe>
+        <hr>
+        <h2>Compare DOM object and JQuery object</h2>
+        <h4>First Header</h4>
+        <h4>Second Header</h4>
+        <h4>Third Header</h4>
+        <button id="btn2" class="btn btn-danger">Compare</button>
+    </div>
+</body>
+</html>

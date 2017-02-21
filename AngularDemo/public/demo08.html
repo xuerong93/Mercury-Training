@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Demo08</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="js/angular.min.js"></script>
+    <script>
+        var app = angular.module("mainApp",[]);
+        app.controller("mainCtrl",["$scope", "$injector",  function($scope,$injector){
+            $injector.invoke(function (person, myService, myFactory,ds, myProvider){
+                $scope.person = person;
+                $scope.service = myService;
+                $scope.factory = myFactory;
+                $scope.ds = ds;
+                $scope.provider = myProvider;
+            });
+
+            $scope.count =100;
+            $scope.$watch("count", function(newVal){
+                $scope.factory.setCount(newVal);
+            });
+            $scope.increase = function(){
+                $scope.factory.increase();
+                $scope.count =  $scope.factory.getCount();
+            };
+            $scope.getAllPerson = function(){
+                $scope.ds.then(function(data){
+                    $scope.personList = data;
+                });
+            };
+        }]);
+
+        app.value("person", {         //value is corresponding to an object
+            name:"Alice",
+            sayHello: function(){
+                return "Hello " + this.name;
+            }
+        });
+
+        app.service("myService", function(){    //service is corresponding to a constructor
+            this.message = "This is my service";        //closure is not suitable for sesrvice
+            this.getCount =function(){            //service is more flexibale than object,can do logic thing
+                return 100;
+            } ;
+
+        });
+
+        app.factory("myFactory",function(){    //factory is corresponding to a function that returns an object
+            var count = 1;
+            return{
+                name: "This is my factory",
+                getCount: function(){
+                    return count;
+                },
+                setCount: function(c){
+                    count = c;
+                },
+                increase: function(){
+                    count++;
+                }
+            }
+        });
+
+        var dataService = function($q,$http){
+            var defer = $q.defer();
+            $http.get("/ds").then(function(res){
+                defer.resolve(res.data);
+            });
+            return defer.promise;
+        };
+
+        app.factory("ds", ["$q","$http", dataService]);
+
+        app.provider("myProvider", function(){
+            this.prefix = "Mr.";
+            this.$get = function(){
+                var that = this;
+                return{
+                    name: "My Provider",
+                    getName: function(){
+                        return that.prefix + " "+ this.name;
+                    }
+                };
+            };
+        });
+        app.config(["myProviderProvider",function(myProviderProvider){
+            myProviderProvider.prefix = "***";
+        }]);
+    </script>
+</head>
+<body ng-app="mainApp">
+    <div class="container" ng-controller="mainCtrl">
+        <h1>Angular Custom Services</h1>
+        <hr>
+        <h2>Use value to create a service</h2>
+        <p>Person Name: {{person.name}}</p>
+        <p>Welcome Message: {{person.sayHello()}}</p>
+        <hr>
+        <h2>Use service to create a sesrvice</h2>
+        <p>Service Message: {{service.message}}</p>
+        <p>Count: {{service.getCount()}}</p>
+        <p>Count: {{service.getCount()}}</p>
+        <hr>
+        <h2>Use Factory to create a service</h2>
+        <p>Factory Name: {{factory.name}}</p>
+        <p>Count: <input type="number" ng-model="count" ></p>
+        <p>Currenct Count: {{count}}</p>
+        <p>Factory Count: {{factory.getCount()}}</p>
+        <button class="btn btn-primary" ng-click="increase()">Increase</button>
+        <hr>
+        <h2>Use data service to return a deferred object as factory</h2>
+        <ul ng-repeat="p in personList">
+            <li>{{p.name}}  : {{p.city}} : {{p.country}}</li>
+        </ul>
+        <button class="btn btn-primary" ng-click="getAllPerson()"> Get all person</button>
+        <hr>
+        <h2>Use Provider to create a service</h2>
+        <p>Provider name: {{provider.getName()}}</p>
+    </div>
+</body>
+</html>

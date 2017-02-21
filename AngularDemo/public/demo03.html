@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Demo03</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="js/angular.min.js"></script>
+    <script>
+        var app=angular.module("mainApp",[]);
+        app.controller("mainCtrl",["$scope",function($scope){
+            $scope.name="Alice";
+            $scope.count = 10;
+            $scope.$watch("count", function(newVal,oldVal){   //just see the old value and new value change, no data binding here
+                console.log(newVal,oldVal);   //watch 失效
+            });
+
+            $scope.change = function(){
+                $scope.count++;
+            }
+        }]);
+
+        //Custom Directive: Element   固定的component可以用Element写， 每次引用该element即可
+        app.directive("myElem", function(){
+            return{
+                scope: false,         //default,主动继承爸爸
+                //不论true or false， 都会继承父亲的值， true 各自使用， false 儿子覆盖爸爸值. judge if need to overlap parent scope, true means not(no need to overlap parent scope, parent has parent scope, child has child scope), false means need to overlap parent(all scope is child scope)
+                restrict: "E",        //default, E(element,default)/A(attribute,default)/C(class)/M(comment)
+                template: "<p>This is my element. My name is {{name}}</p><p>Value of x: {{x}}</p>",
+                link: function(scope,elem,attr){             //link看官网，relate to compile
+                    scope.name="Steven";
+                    scope.x = attr.x;
+                }
+            };
+        });
+
+        app.directive("anotherElem", function(){
+            return{
+                scope: true,
+                restrict: "E",
+                transclude: true,  // to show contents between own created element, then in html file add: <ng-transclude></ng-transclude>
+                templateUrl:"template/another-elem.html",
+                link: function(scope, elem, attr){
+                    scope.name ="David";
+                    elem.on("click", function(){
+                        console.log("The element is clicked");
+                    });
+                }
+            }
+        });
+
+        app.directive("isolatedElem", function(){
+            return {
+                scope: {},         //it results an isolated scope，和父亲没有关系，完全不继承, 防止被爸爸污染，比方说未定义时不想要初始值但爸爸里有一样名字的， isolate scope使它不会有初始值
+                restrict: "E",
+                template: "<p>This element has an isolated scope.</p><p>Name: {{name}}</p>",
+                link: function(scope, elem, attr){
+                    scope.name = "Tommy";
+                }
+            }
+        });
+
+
+        //Custom Directive: Attribute,定义 customized event. in jquery, ....on()   trigger
+        app.directive("myAttr", function(){
+            return{
+                scope: true,
+                restrict: "A",
+                template: "<p>This is an attribute</p><p>The value of str: {{str}}</p>",
+                link: function(scope, elem, attr){
+                    scope.str = attr.myAttr;
+                }
+            }
+        });
+
+        //第三方event, attribute directive
+        app.directive("myEvent",function(){       //不会有自己的element，即no template，scope and restrict(attribute) are default
+            return function(scope, elem, attr){    //this function is the function of link
+                elem.on("click",function(){
+                    scope.count++;
+                    console.log("Count: " , scope.count );
+                    scope.$digest();         //补救第三方没有watch的方法
+                });
+            }
+        });
+
+
+
+        //custom directive: class
+        app.directive("myClass",function(){
+            return {
+                scope: false,
+                restrict: "C",
+                template: "<p>This is a class directive</p><p>Value of y: {{y}}</p>",
+                link: function(scope,elem,attr){
+                    scope.y = attr.myClass;
+                }
+            }
+        });
+
+    </script>
+</head>
+<body ng-app="mainApp">
+    <div class="container" ng-controller="mainCtrl">
+        <h1>Angular Custom Directives</h1>
+        <hr>
+        <p>Name: {{name}}</p>
+
+        <h2>Element Directive</h2>
+        <my-elem x="100"></my-elem>
+        <br>
+        <another-elem>Message within the element</another-elem>
+        <br>
+        <isolated-elem></isolated-elem>
+        <hr>
+
+        <h2>Attribute Directive</h2>
+        <div my-attr="xyz"></div>
+        <button my-event class="btn btn-primary">Increase count</button>
+        <p>count: {{count}}</p>
+
+        <button  class="btn btn-primary" ng-click="change()">Increase count</button>
+        <hr>
+
+        <h2>Class Directive</h2>
+        <div class="my-class: 100"></div>
+    </div>
+    
+</body>
+</html>

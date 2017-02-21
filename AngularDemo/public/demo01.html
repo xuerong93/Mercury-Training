@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo01</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5shiv.js"></script>
+    <![endif]-->
+    <script src="js/angular.min.js"></script>
+    <script>
+        var app=angular.module("mainApp",[]);//only one main module, [] means dependent modules
+        app.controller("mainCtrl",["$scope",function($scope){  //dynamic naming space     //can have multiple controllers
+            $scope.getMessage=function(){
+                console.log($scope.welcome);
+            };
+            $scope.x=236875.235;
+            $scope.count=100;
+            //Addd a watch on count
+            $scope.$watch("count",function(newVal, oldVal){
+                console.log(newVal, oldVal);
+            });
+
+            $scope.changeName=function(){
+                $scope.name = "Alice";
+            };
+
+            $scope.countWatchers = function(){
+                var numOfWatchers = 0;
+                var elements = document.querySelectorAll(".ng-scope");
+                for(var i=0; i<elements.length; i++){
+                    var scope = angular.element(elements[i]).scope();
+                    if(scope.$$watchers) {
+                        numOfWatchers += scope.$$watchers.length;
+                    }
+                }
+                return numOfWatchers;
+            };
+
+            $scope.str = "A String";    //watch does not change if no binding to this property
+        }]);
+        app.controller("anotherCtrl",function(){
+            this.message = "Another message";
+        });
+    </script>
+</head>
+<body ng-app="mainApp">
+    <div class="container" ng-controller="mainCtrl">    <!--control in div-->
+        <h1>Angular Data Binding</h1>
+        <hr>
+        <h2>One Way Binding</h2>
+        <div ng-init="welcome = 'Hello, welcome to Angular!'">
+            <p>One way binding is a read only binding</p>
+            <p ng-click="getMessage()">Binded Message: {{welcome}}</p>
+            <p>Binded Message: <span ng-bind="welcome | uppercase"></span></p>
+            <p>Value of x: {{x |currency}}</p>
+            <p>String value: {{str}}</p>
+        </div>
+        <hr>
+        <h2>Two Way binding</h2>
+        <p>Two Way binding uses ng-model for input field to do both read and write</p>
+        <p>Input your name: <input type="text" ng-model="name"/></p>
+        <p ng-click="changeName()">Your name is: {{name}}</p>
+        <hr>
+        <h2>One time binding</h2>
+        <p>One time binding only binds once</p>
+        <p>Count: <input type="number" ng-model="count"/></p>
+        <p>Fixed count: {{::count}}</p>
+        <p>Current count: {{count}}</p>
+        <hr>
+        <h3>Number of watchers: {{countWatchers()}}</h3>
+    </div>
+    <div class="container" ng-controller="anotherCtrl as ac">  <!--no scope no this so need keyword "as"-->
+        <h2>Controller without $scope</h2>
+        <p>Binded Message: {{ac.message}}</p>
+        
+    </div>
+</body>
+</html>

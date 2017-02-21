@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Demo10</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-route.min.js"></script>
+    <script src="js/angular-ui-router.min.js"></script>
+    <script>
+        var app = angular.module("mainApp",["ngRoute","ui.router"]);
+        app.controller("mainCtrl",["$scope", function($scope){
+            $scope.person = {            //mutable object
+                name :"Alice"
+            };
+            $scope.count=100;           //immutable, primitive
+        }]); 
+        app.config(["$routeProvider", function($routeProvider){
+            $routeProvider.when("/home",{
+                templateUrl: "template/home.html",
+                controller: "homeCtrl"
+            }).when("/menu1", {
+                templateUrl: "template/menu1.html",
+                controller: "menu1Ctrl"
+            }).when("/menu2/:word",{
+                templateUrl: "template/menu2.html",
+                controller: "menu2Ctrl"
+            }).otherwise({
+                redirectTo: "/home"
+            });
+        }]);
+        
+
+        app.controller("menu2Ctrl", ["$scope", "$routeParams", function($scope, $routeParams){
+            $scope.word = $routeParams.word;
+        }]);
+        app.controller("homeCtrl", ["$scope", "sharedData", function($scope, sharedData){
+            $scope.data = sharedData;
+        }]);
+        app.controller("menu1Ctrl", ["$scope", "sharedData", function($scope, sharedData){
+            $scope.data = sharedData;
+        }]);
+        app.value("sharedData", {
+            message: "This is a shared data"
+        });
+
+
+        app.config(["$stateProvider", function($stateProvider){
+            $stateProvider.state("main", {
+                url: "/main",
+                templateUrl: "template/main.html"
+            }).state("state1", {
+                url: "/state1",
+                templateUrl: "template/page1.html",
+                controller: function($scope){
+                    $scope.message = "Hello, Page1";
+                }
+            }).state("state2", {
+                url: "/state2/:name",
+                templateUrl: "template/page2.html",
+                controller: function($scope, $stateParams) {
+                    $scope.message = "Hello Page2",
+                    $scope.para = $stateParams.name;
+                }
+            }).state("state1.menu1",{
+                url: "/state1/menu1",
+                templateUrl: "template/sub1.html"
+            }).state("state1.menu2",{
+                url: "/state1/menu2",
+                templateUrl: "template/sub2.html"
+            });
+        }]);
+
+
+    </script>
+</head>
+<body ng-app="mainApp">
+    <div class="container" ng-controller="mainCtrl">  
+        <h1>Angular Routing</h1>
+        <hr>
+        <p>Person Name: {{person.name}}</p>
+        <p>Count: {{count}}</p>     <!-- generate a new count -->
+        <h2>Use ngRoute</h2>
+        <div>
+            <ul class="list-inline">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#menu1">Menu1</a></li>
+                <li><a href="#menu2/Table">Menu2</a></li>
+            </ul>
+            <!-- <nav>
+                <a href="#home">Home</a>
+                <a href="#menu1">Menu1</a>
+                <a href="#menu2">Menu2</a>
+            </nav>-->
+            <div ng-view></div>    <!-- generate child scope -->
+        </div>
+        <hr>
+
+
+
+        
+        <h2>Use ui-router</h2>
+        <nav>
+            <a ui-sref="main">Main</a>
+            <a ui-sref="state1">Page1</a>
+            <a ui-sref="state2({name: 'Alice'})">Page2</a>
+        </nav>
+       <div ui-view></div>
+
+       <h1>End of Page</h1>
+    </div>
+</body>

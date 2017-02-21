@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo01</title>
+    <link rel = "stylesheet" href = "css/bootstrap.min.css" type = "text/css">
+    <script src="js/jquery-3.1.0.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#btn1").click(function(){
+                
+                //console.log($("#para")[0].innerHTML); //the same as below 
+                console.log($("#para").text());
+                console.log($(".x").text());
+                console.log($("h4").text());
+            });
+            //console.log("h1 before: " + document.getElementsByTagName("h1")[0].innerHTML);
+            $("#btn2").click(function(){
+                $("#para").text("<b>The paragraph is changed</b>");
+                $(".x").html("<b>The span message is changed</b>");
+                $("h4").text("The header text is changed");
+            });
+            $("#btn3").click(function(){
+                var a = $("a[target='_blank']");
+                console.log(a);
+                console.log(a.text());
+                console.log(a.attr("href"));
+                a.attr("href", "http://w3school.org");
+                a.text("w3School");
+            });
+            $("#btn4").click(function(){
+                var p= $("#another");
+                console.log("Attribute id: " + p.attr("id"));
+                console.log("Property id: " + p.prop("id"));
+                console.log("Attribute foo: " + p.attr("foo"));
+                console.log("Property id: " + p.prop("foo"));
+                p.css({
+                    color: "red",
+                    fontSize: "30px"
+                });
+            });
+            $("#btn5").click(function(){
+                //$("#state").find("option[value='MD']").attr("selected", true);
+                $("#state").val("MD");
+            });
+            $("#btn6").click(function(){
+                var items = $("#items");
+                console.log(items.find("li:first").text());
+                console.log(items.find("li:last").text());
+                items.find("li:odd").css({color: "red"});
+                items.find("li:even").css({color: "blue"});
+                items.find("li").eq(1).css({fontSize: "30px"});
+                items.find("li:nth-child(3)").css({fontSize: "20px"});
+                console.log(items.find("li:contains(4)").text());
+                console.log($("li[title*='Item']").text());
+                // console.log($("tag[attr^='Item']").text());//start with "Item"
+                // console.log($("tag[attr~='Item']").text());//exactly same as "Item"
+                // console.log($("tag[attr*='Item']").text());//contains "Item"
+            })
+        });
+    </script>
+    <script>
+         setTimeout(function(){console.log("h1: " + document.getElementsByTagName("h1")[0].innerHTML);},0);
+    </script>
+
+
+</head>
+<body>
+     <div class="container">
+         <h1>Jquery Demo01: selectors</h1>
+         <script>
+            console.log( document.getElementsByTagName("h1")[0].innerHTML);
+            console.log("h1 later: " + document.getElementsByTagName("h1")[0].innerHTML);
+        </script>
+         <h2>Basic Selectors</h2>
+         <p id ="para">This is a paragraph</p>
+         <span class="x">This is a span</span>
+         <hr>
+         <h4>This is a header text</h4>
+         <button id="btn1" class="btn btn-primary">Basic Select</button>
+         <button id="btn2" class="btn btn-primary">Update</button>
+         <hr>
+
+         <h2>Select Attribute</h2>
+         <p><a href="http://www.google.com" target='_blank'>Google</a></p>
+         <p><a href="http://www.yahoo.com">Yahoo</a></p>
+         <p id="another" foo="bar">This is another paragrapph</p> <!--html cannot reconnize foo-->
+         <button id="btn3" class="btn btn-default">Select by AATRIBUTE</button>
+         <button id="btn4" class="btn btn-success">Change Style</button>
+         <hr>
+
+         <h2>One Question</h2>
+         <p>
+             Select a state:
+             <select  id="state">
+                <option value=""></option>
+                 <option value="NJ">New Jersey</option>
+                 <option value="NY">New York</option>
+                 <option value="MD">MaryLand</option>
+                 <option value="VA">Virginia</option>
+             </select> 
+         </p>
+         <button id="btn5" class="btn btn-warning">Select MaryLand</button>
+         <hr>
+
+         <h2>Selection Collections</h2>
+         <ul id="items">
+             <li title='Item1'>Item1</li>
+             <li title='Item2'>Item2</li>
+             <li title='Item3'>Item3</li>
+             <li title='Item4'>Item4</li>
+             <li title='Item5'>Item5</li>
+         </ul>
+         <button id="btn6" class="btn btn-danger">Selection Collection</button>
+     </div>
+
+</body>
+
+</html>
+            
+

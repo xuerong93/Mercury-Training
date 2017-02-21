@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Demo02</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-animate.min.js"></script>
+    <script>
+        var app  = angular.module("mainApp", ["ngAnimate"]);
+        app.controller("mainCtrl", ["$scope",function($scope){
+            $scope.person = {
+                firstName: "Bruce",
+                lastName: "Lee",
+                getFullName: function(){
+                    return this.firstName + " " + this.lastName;
+                }
+            };
+
+            $scope.itemList = [
+                {itemNo: "A001", price: 10, qty:30, inStock: true},
+                {itemNo: "A002", price: 20, qty:3, inStock: true},
+                {itemNo: "A003", price: 25, qty:5, inStock: false},
+                {itemNo: "A004", price: 15, qty:8, inStock: true},
+            ];
+
+            $scope.getTotalValue = function(){
+                var totalValue = 0;
+                $scope.itemList.forEach(function(item){
+                    totalValue += item.qty * item.price;
+                });
+                return totalValue;
+            }
+
+            $scope.doDelete = function(index){  //delete an item in array
+                $scope.itemList.splice(index,1);   //The splice() method changes the contents of an array by removing existing elements and/or adding new elements.
+            }
+        }]);
+    </script>
+    <style>
+        div.hiddenArea {
+            -webkit-transition: all linear 2s;
+            transition: all linear 2s;
+            background-color: blue;
+            height: 50px;
+            width: 50px;
+        }
+        .hiddenArea.ng-hide{
+            opacity: 0;
+        }
+    </style>
+</head>
+<body ng-app = "mainApp">
+    <div class = "container" ng-controller = "mainCtrl">
+        <h1>Advanced Data Binding</h1>
+        <hr>
+        <h2>Binding Object</h2>
+        <p>First Name: <input type="text" ng-model="person.firstName"/></p>
+        <p>Last Name: <input type="text" ng-model="person.lastName"/></p>
+        <p>Full Name: {{person.getFullName()}}</p>
+        <hr>
+
+        <h2>Binding Collection</h2>
+        <table class = "table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Item Number</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Value</th>
+                    <th>In Stock</th>
+                    <th>Operations</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in itemList">
+                    <td>{{item.itemNo}}</td>
+                    <td>{{item.price}}</td>
+                    <!--<td>{{item.qty}}</td>-->
+                    <td><input type="number" ng-model="item.qty"/></td>
+                    <td>{{item.price * item.qty}}</td>
+                    <td>
+                        <input type="checkbox" ng-model="item.inStock" ng-disabled="true"/>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-link" ng-click="doDelete($index)">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h3>Total Price: <span style="color:red" ng-bind="getTotalValue() | currency"></span></h3>
+        <hr>
+
+
+        <h2>Conditional Binding</h2>
+        <div>
+            <p><input type="checkbox" ng-model="mustShow"/>Select to show</p>
+            <p ng-show="mustShow">Showed Message</p>
+            <p><input type="checkbox" ng-model="mustHide"/>Select to hide</p>
+            <p ng-hide="mustHide">Hidden Message</p>
+            <p>Input a number: <input type="number" ng-model="change" min="-100" max="100"/></p>
+            <p>
+                The change is:
+                <b ng-if="change>0" style="color:green">{{change}}</b>
+                <b ng-if="change==0" style="color:black">{{change}}</b>
+                <b ng-if="change<0" style="color:red">{{change}}</b>
+            </p>
+        </div>
+        <hr>
+
+        
+        <h2>Binding with Animation</h2>
+        <div>
+            <p>Hide/Show: <input type="checkbox" ng-model="canHide"/></p>
+            <div class="hiddenArea" ng-hide="canHide"></div>
+            <h2>End of Page</h2>
+        </div>
+    </div>
+</body>
+</html>

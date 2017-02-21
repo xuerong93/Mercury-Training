@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Demo09</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="js/angular.min.js"></script>
+    <script>
+        var app = angular.module("mainApp",[]);
+        app.controller("mainCtrl",["$scope","$q", "$http", function($scope, $q, $http){
+            $scope.doCal = function(){
+                var url1 = "/cal/add/" + $scope.data.x + "/ " + $scope.data.y;
+                var url2 = "/cal/multiply/" + $scope.data.x + "/ " + $scope.data.y;
+                $http.get(url1).then(function(res){
+                    var r = res.data;
+                    $http.get(url2).then(function(res){
+                        $scope.result = r/res.data;
+                    });
+                });
+            };
+
+            $scope.doCal2 = function(){
+                var url1 = "/cal/add/" + $scope.data.x + "/ " + $scope.data.y;
+                var url2 = "/cal/multiply/" + $scope.data.x + "/ " + $scope.data.y;
+                $q.all([                     //like $.when(ajax call 1, ajax call 2, ...)
+                        $http.get(url1),
+                        $http.get(url2)
+                    ]).then(function(res){
+                        console.log(res);
+                        $scope.result = res[0].data/res[1].data;
+                    });
+            };
+
+            $scope.doCal3 = function(){
+                $q.all([                     //like $.when( ajax call 1, ajax call 2, ...)
+                        $http.post("/cal/add", $scope.data),
+                        $http.post("/cal/multiply", $scope.data)
+                    ]).then(function(res){
+                        console.log(res);
+                        $scope.result = res[0].data/res[1].data;
+                    });
+            };
+        }]);
+    </script>
+</head>
+<body ng-app="mainApp">
+    <div class="container" ng-controller="mainCtrl">   
+        <h1>Demo: Calculater</h1>
+        <hr>
+        <div>
+            <form role="form" class="form col-sm-6" novalidate>   <!-- novalidate : disable html5 validation-->
+                <div class="form-group">
+                    <label for="x">Input x</label>
+                    <input type="number" class="form-control" ng-model="data.x" placeholder="5" ng-min="1" ng-max="100"/>
+                </div>
+                <div class="form-group">
+                    <label for="y">Input y</label>       <!--for is designed for disabled person, click label can also focus on input part-->
+                    <input type="number" class="form-control" ng-model="data.y" min="1" max="100" />
+                </div>
+                <button class="btn btn-primary" ng-click="doCal()">Calculate</button>
+                <button class="btn btn-primary"  ng-click="doCal2()">Calculate2</button>
+                <button class="btn btn-primary"  ng-click="doCal3()">Calculate3</button>
+                <div>
+                    <h3>Result: {{result}}</h3>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+

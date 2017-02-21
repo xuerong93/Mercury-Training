@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Demo06</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="js/angular.min.js"></script>
+    <script>
+        var app = angular.module("mainApp",[]);
+        app.controller("mainCtrl",["$scope", function($scope){
+            $scope.message="Hello world";
+
+            $scope.orderList=[
+                {id:10, name: "LapTop", qty: 20, price:100},
+                {id:20, name: "Rasor", qty: 2, price:350},
+                {id:30, name: "Desk", qty: 50, price:20},
+                {id:40, name: "Microwave", qty: 25, price:30},
+                {id:50, name: "Suitcase", qty: 32, price:71}
+            ];
+            $scope.price = 10;
+            $scope.sortCol = "name"; //定义变量来排序
+            $scope.reverse=false;
+
+            $scope.changeSortCol = function(col){
+                $scope.sortCol = col;
+                $scope.reverse=!$scope.reverse;
+            }
+        }]);
+
+        app.filter("reverse", function(){
+            return function(str){
+                return str.split("").reverse().join("");  // js array has the reverse function, string do not have reverse function
+            }
+        });
+
+        app.filter("priceFilter", function(){
+            return function(items, price){
+                var filtered = [];
+                //              collection, function
+                angular.forEach(items, function(item){
+                    if(item.price>price) filtered.push(item);
+                });
+                return filtered;
+            };
+        });
+    </script>
+</head>
+<body ng-app="mainApp">
+    <div class="container" ng-controller="mainCtrl">
+        <h1>Angular Filters</h1>
+        <hr>
+        <h2>Custom Filter</h2>
+        <p>Normal Message: {{message}}</p>
+        <p>Reversed Message: {{message | reverse}}</p>
+        <hr>
+        <h2>Collection Filter</h2>
+        <p>Filtered word <input ng-model="word"/></p>
+        <p>Minium Price <input type="number" ng-model="price"></p>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <td><a href="javascript:void(0)" ng-click="changeSortCol('id')">ID</a></td><!--prevent default event-->
+                    <td><a href="javascript:void(0)" ng-click="changeSortCol('name')">Name</a></td>
+                    <td><a href="javascript:void(0)" ng-click="changeSortCol('qty')">Quantity</a></td>
+                    <td><a href="javascript:void(0)" ng-click="changeSortCol('price')">Price</a></td>
+                    <td><a href="javascript:void(0)" ng-click="changeSortCol('qty*price')">Value</a></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="order in orderList | filter: word | priceFilter:price | orderBy: sortCol: reverse | limitTo: 3"><!--filter:{name:word, qty: filter1}--><!--priceFilter:price:300" means from price to 300 还需要在priceFilter里面加条件<price2--><!--orderBy: 'name': true" 是通过name倒序-->
+                    <td>{{order.id}}</td>
+                    <td>{{order.name}}</td>
+                    <td>{{order.qty}}</td>
+                    <td>{{order.price}}</td>
+                    <td>{{order.qty * order.price}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>    
+</body>
+</html>

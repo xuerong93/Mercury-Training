@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Demo05</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="js/angular.min.js"></script>
+    <script>
+        var app = angular.module("mainApp",[]);
+        app.controller("mainCtrl", ["$scope","$rootScope",function($scope,$rootScope){
+            $rootScope.person = {
+                name: "Alice"
+            };
+            //be careful of $on's $
+            $scope.$on("updateX", function(evt, val){
+                console.log("Receive value: "+val);
+                $scope.$broadcast("broadcastX", val);
+            });
+        }]);
+        app.controller("firstCtrl", ["$scope","address",function($scope, address){
+            $scope.x=10;
+            $scope.$watch("x", function(newVal){
+                $scope.$emit("updateX", newVal);  //通过emit从child传到parent
+            });
+            $scope.address = address;
+        }]);
+        app.controller("secondCtrl", ["$scope", "address", function($scope,address){
+            $scope.$on("broadcastX", function(evt,val){
+                $scope.y = 2*val + 3;
+            });
+            $scope.address = address;
+        }]);
+
+        //Define angular service
+        app.value("address", {
+            city: "Princeton",
+            state: "NJ"
+        });
+    </script>
+</head>
+<body ng-app="mainApp">
+    <div class="container" ng-controller="mainCtrl">
+        <h1>Communication between Controllers (Scopes)</h1>
+        <hr>
+        <h2>Inside First Controller</h2>
+        <div ng-controller="firstCtrl">
+            <p>Input Name: <input type="text" ng-model="person.name"></p>
+            <p>Value of x: <input type="number" ng-model="x"></p>
+            <p>City: <input type="text" ng-model="address.city"></p>
+            <p>State: <input type="text" ng-model="address.state"></p>
+        </div>
+        <hr>
+        
+        <h2>Inside Second Controller</h2>
+        <div ng-controller="secondCtrl">
+            <p>Name: {{person.name}}</p>
+            <p>Value of y = 2x+3:  {{y}}</p>
+            <p>Address: {{address.city}}, {{address.state}}</p>
+        </div>
+    </div>
+    
+</body>
+</html>
