@@ -30,21 +30,23 @@
             });
         }]);
         
-
-        app.controller("menu2Ctrl", ["$scope", "$routeParams", function($scope, $routeParams){
-            $scope.word = $routeParams.word;
-        }]);
         app.controller("homeCtrl", ["$scope", "sharedData", function($scope, sharedData){
             $scope.data = sharedData;
         }]);
         app.controller("menu1Ctrl", ["$scope", "sharedData", function($scope, sharedData){
             $scope.data = sharedData;
         }]);
+        app.controller("menu2Ctrl", ["$scope", "$routeParams", function($scope, $routeParams){
+            console.log($routeParams);
+            $scope.word = $routeParams.word;
+        }]);
+
+        //create a service
         app.value("sharedData", {
             message: "This is a shared data"
         });
 
-
+        // use ui-router
         app.config(["$stateProvider", function($stateProvider){
             $stateProvider.state("main", {
                 url: "/main",

@@ -36,7 +36,7 @@
         app.filter("priceFilter", function(){
             return function(items, price){
                 var filtered = [];
-                //              collection, function
+                // collection, function
                 angular.forEach(items, function(item){
                     if(item.price>price) filtered.push(item);
                 });

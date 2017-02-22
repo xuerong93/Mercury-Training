@@ -31,6 +31,7 @@
             };
         }]);
 
+        //app.value is to create a service
         app.value("person", {         //value is corresponding to an object
             name:"Alice",
             sayHello: function(){
@@ -38,14 +39,17 @@
             }
         });
 
+        //app.service is to construct a service
         app.service("myService", function(){    //service is corresponding to a constructor
-            this.message = "This is my service";        //closure is not suitable for sesrvice
+            this.message = "This is my service";        //closure is not suitable for service
             this.getCount =function(){            //service is more flexibale than object,can do logic thing
                 return 100;
             } ;
 
         });
 
+
+        //use factory to create a service 
         app.factory("myFactory",function(){    //factory is corresponding to a function that returns an object
             var count = 1;
             return{
@@ -62,6 +66,7 @@
             }
         });
 
+        //Use data service to return a deferred object as factory
         var dataService = function($q,$http){
             var defer = $q.defer();
             $http.get("/ds").then(function(res){
@@ -72,6 +77,7 @@
 
         app.factory("ds", ["$q","$http", dataService]);
 
+        //use provider to create a service
         app.provider("myProvider", function(){
             this.prefix = "Mr.";
             this.$get = function(){
