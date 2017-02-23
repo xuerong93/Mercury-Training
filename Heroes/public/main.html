@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hero Home page</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/heroes.css">
+    <link rel="stylesheet" href="css/hero-detail.css">
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-route.min.js"></script>
+    <!-- <script src = "js/hero.js"></script> -->
+    <script>
+        var app = angular.module("mainApp",["ngRoute"]);
+        app.controller("mainCtrl", ["$scope", "$http", "$injector", "ds", function($scope, $http, $injector,ds){
+            $injector.invoke(function(ds){
+                $scope.ds = ds;
+            });
+            
+            $scope.ds.then(function(res) {
+                //console.log(res);
+                $scope.heroesList = res;
+                $scope.topHeroList = res.slice(1,5);
+            });
+
+            // $scope.getTopHeroes = function(){
+            //     $scope.ds.then(function(data){
+            //         $scope.topHeroList = data.slice(1,5);
+            //     });
+            // };
+            // $scope.getCurrentHero = function(index){
+            //     $injector.invoke(function($http, $window){
+            //         $http.get("/ds/" + index).then(function(res){
+            //             $scope.currentHero = res.data;    //compare with .success
+            //             // console.log(index);
+            //             // console.log($scope.currentHero.id);
+
+            //             $scope.index = index;
+            //             $window.location.href = '#detail/' + index;
+            //         });
+            //     });
+            // };
+        
+        }]);
+
+        app.config(["$routeProvider",function($routeProvider){
+            $routeProvider.when("/dashboard",{
+                templateUrl: "./html/dashboard.html",
+                controller: "dashboardCtrl"
+            }).when("/heroes",{
+                templateUrl: "./html/heroes.html",
+                controller: "heroesCtrl"
+            }).when("/detail/:id",{
+                templateUrl: "./html/heroDetail.html",
+                controller: "heroDetailCtrl"
+            }).otherwise({
+                redirectTo:"/dashboard"
+            })
+        }]);
+
+        app.controller("dashboardCtrl", ["$scope", function($scope){
+
+        }]);
+        app.controller("heroesCtrl", ["$scope", "$window", function($scope, $window) {
+            $scope.selectHero = function(Hero){
+                $scope.selected = Hero;
+            }
+
+            $scope.redirect = function(){
+                $window.location.href = '#detail/' + $scope.selected.id;
+            }
+        }]);
+        app.controller("heroDetailCtrl", ["$scope", "$routeParams", function($scope, $routeParams){
+            $scope.id = $routeParams.id;
+            console.log($scope.id);
+            angular.forEach($scope.heroesList, function(h){
+                if(h.id == $scope.id){
+                    $scope.currentHero = h;
+                }
+            });
+        }]);
+
+        var dataService = function($q,$http){
+            var defer = $q.defer();
+            $http.get("/ds").then(function(res){
+                defer.resolve(res.data);
+            });
+            return defer.promise;
+        };
+
+        app.factory("ds", ["$q","$http", dataService]);
+
+        
+
+    </script>
+</head>
+<body ng-app = "mainApp">
+    <div class = "container" ng-controller="mainCtrl">
+        <p>My hero</p>
+        <ul class = "list-inline">
+            <li><a href="#dashboard" ng-click="getTopHeroes()">Dashboard</a></li>
+            <li><a href="#heroes">Heroes</a></li>
+            <div ng-view></div>
+        </ul>
+    </div>
+</body>
+</html>

@@ -4,7 +4,7 @@ import { FormsModule } from"@angular/forms";
 import {RouterModule}  from "@angular/router";
 import { HttpModule }    from '@angular/http';
 
-import {AppComponent} from './app.component';   //write my ourselves
+import {AppComponent} from './app.component';   //write by ourselves
 import { HeroDetailComponent} from "./component/hero-detail.component";
 import {HeroesComponent} from "./component/heroes.component";
 import { HeroService } from "./service/hero.service";

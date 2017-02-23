@@ -1,0 +1,13 @@
+<div>
+    <h2>My Heroes</h2>
+    
+    <ul ng-repeat="hero in heroesList">
+        <li ng-click="selectHero(hero)">{{hero.id}} : {{hero.name}}</li><!-- getCurrentHero($index) -->
+    </ul>
+    <div ng-show="selected">
+        <h2>
+            {{selected.name | uppercase}} is my hero
+        </h2>
+         <button ng-click="redirect()">View Details</button>
+    </div>
+</div>

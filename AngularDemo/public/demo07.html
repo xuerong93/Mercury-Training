@@ -10,6 +10,7 @@
     <script>
         var app = angular.module("mainApp",["ngSanitize","ngResource"]);
         app.controller("mainCtrl",["$scope", "$injector","$resource", function($scope,$injector,$resource){
+            
             $injector.invoke(function($location,$timeout, $interval){  //$timeout works the same with setTimeout, but setTimeout doesn't work in angular(setTimeout不认scope)
                 $scope.url = $location.absUrl();
                 $timeout(function(){
