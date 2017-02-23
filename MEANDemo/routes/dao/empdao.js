@@ -29,4 +29,29 @@ ed.getAllEmp =function(db, callback){
     });
  };
 
+ ed.insertEmp = function(db, emp, callback){
+    var collection = db.collection("emp");
+    collection.insertOne(emp, function(err, result){
+        callback(result);
+    });
+ };
+
+ed.updateEmp = function(db, emp, callback) {
+     var collection = db.collection("emp");
+     collection.replaceOne({
+        name: emp.name
+     },emp, function(err, result){
+        callback(result);
+     });
+};
+
+ed.deleteEmp = function(db, name, callback) {
+    var collection= db.collection("emp");
+    collection.deleteOne({
+        name: name
+    }, function(err, result){
+        callback(result);
+    });
+};
+
  module.exports = ed;

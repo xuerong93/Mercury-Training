@@ -1,3 +1,26 @@
 <div>
     <h2>Display all employees</h2>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <td>Name</td>
+                <td>Age</td>
+                <td>City</td>
+                <td>State</td>
+                <td>Operations</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="emp in empList">
+                <td>{{emp.name}}</td>
+                <td>{{emp.age}}</td>
+                <td>{{emp.address.city}}</td>
+                <td>{{emp.address.state}}</td>
+                <td>
+                    <button class="btn btn-link" ng-click="doUpdate(emp.name)">Update</button>
+                    <button class="btn btn-link" ng-click="doDelete($index)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>

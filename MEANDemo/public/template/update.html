@@ -1,3 +1,23 @@
 <div>
     <h2>Update an existing employee</h2>
+     <form class="form col-sm-6" role="form" name="myForm">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input ng-model="emp.name" id="name" class="form-control" ng-disabled="true">
+        </div>
+        <div class="form-group">
+            <label for="age">Age</label>
+            <input type="number" ng-model="emp.age" id="age" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="city">City</label>
+            <input ng-model="emp.address.city" id="city" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="state">State</label>
+            <input ng-model="emp.address.state" id="state" class="form-control" required>
+        </div>
+        <button class="btn btn-primary" ng-click="doClear()">Clear</button>
+        <button class="btn btn-primary" ng-click="doSubmit()" ng-disabled="myForm.$invalid">Submit</button>
+    </form>
 </div>

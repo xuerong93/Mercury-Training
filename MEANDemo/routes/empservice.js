@@ -15,7 +15,7 @@ router.get("/emp", function(req, res){
 
 router.get("/emp/:name", function(req,res){
     var name =req.params.name;
-    MongoClient.connect(url, function(err,db){
+    MongoClient.connect(url, function(err, db){
         ed.getEmpByName(db, name, function(result){
             if(result.length==0) res.json([]);
             else res.json(result[0]);
@@ -23,5 +23,36 @@ router.get("/emp/:name", function(req,res){
         });
     });
 });
+
+router.post("/emp", function(req, res){
+    var emp = req.body;
+    MongoClient.connect(url, function(err, db){
+        ed.insertEmp(db, emp, function(result) {
+            res.json(result);
+            db.close();
+        });
+    });
+});
+
+router.put("/emp", function(req, res){
+    var emp = req.body;
+    MongoClient.connect(url, function(err, db){
+        ed.updateEmp(db, emp, function(result) {
+            res.json(result);
+            db.close();
+        });
+    });
+});
+
+router.delete("/emp/:name", function(req, res){ 
+    var name = req.params.name;
+    MongoClient.connect(url, function(err,db){
+        ed.deleteEmp(db, name, function(result){         
+            res.json(result);
+            db.close();
+        });
+    });
+});
+
 
 module.exports = router;
