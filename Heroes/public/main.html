@@ -16,7 +16,7 @@
             $injector.invoke(function(ds){
                 $scope.ds = ds;
             });
-            
+
             $scope.ds.then(function(res) {
                 //console.log(res);
                 $scope.heroesList = res;
@@ -40,7 +40,7 @@
             //         });
             //     });
             // };
-        
+
         }]);
 
         app.config(["$routeProvider",function($routeProvider){
@@ -58,8 +58,11 @@
             })
         }]);
 
-        app.controller("dashboardCtrl", ["$scope", function($scope){
-
+        app.controller("dashboardCtrl", ["$scope","$window", function($scope,$window){
+          $scope.selectHero = function(Hero){
+              $scope.selected = Hero;
+              $window.location.href = '#detail/' + $scope.selected.id;
+          }
         }]);
         app.controller("heroesCtrl", ["$scope", "$window", function($scope, $window) {
             $scope.selectHero = function(Hero){
@@ -90,7 +93,7 @@
 
         app.factory("ds", ["$q","$http", dataService]);
 
-        
+
 
     </script>
 </head>
