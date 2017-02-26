@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Demo03</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="js/d3.min.js"></script>
+    <script>
+        function doChart() {
+            var svg = d3.select("#linear");
+            var dataSet = [1.2, 2.3, 0.9, 1.5, 3.3];
+            var width = parseInt(svg.style("width"));
+            var height = parseInt(svg.style("height"));
+            //use linear scale
+            var min = 0; //d3.min(daataSet);
+            var max = d3.max(dataSet);
+            var linear = d3.scale.linear().domain([min, max]).range([0,width]);
+
+            var rectHeight = d3.max([10, height/(dataSet.length +1)]);
+            svg.selectAll("rect").data(dataSet)
+                .enter()
+                .append("rect")
+                .attr("x", 20)
+                .attr("y", function(d, i) {
+                    return i * rectHeight;
+                })
+                .attr("width", function(d) {
+                    return linear(d);
+                })
+                .attr("height", rectHeight - 2)
+                .attr("fill", "steelblue");
+
+                //Ordinal Scale
+                var index = ["a", "b", "c", "d", "e"];
+                var color = ["red", "blue", "green", "yellow", "black"];
+
+                var ordinal = d3.scale.ordinal().domain(index).range(color);
+                console.log(ordinal("a"));
+        }
+
+        function doChange() {
+            var svg = d3.select("#linear");
+            svg.style("width", "200px");
+            svg.style("height", "200px");
+            svg.selectAll("svg > *").remove();
+            doChart();
+        }
+
+    </script>
+    
+</head>
+<body>
+    <div class="container">
+        <h1>D3 Scale System</h1>
+        <hr>
+        <div>
+            <button class="btn btn-primary" onclick="doChart()">Make Chart</button>
+            <button class="btn btn-primary" onclick="doChange()">Change Size</button>
+            <svg style="width: 300px; height: 300px" id="linear"></svg>
+        </div>
+    </div>
+    
+</body>
+</html>

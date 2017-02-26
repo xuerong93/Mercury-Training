@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Demo02</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="js/d3.min.js"></script>
+    <script>
+        function doChart() {
+            var svg = d3.select("#linear");
+            var dataSet = [1.2, 2.3, 0.9, 1.5, 3.3, 3.9];
+            var width = parseInt(svg.style("width"));
+            var height = parseInt(svg.style("height"));
+            //use linear scale
+            var min = 0; //d3.min(daataSet);
+            var max = d3.max(dataSet);
+            var linear = d3.scale.linear().domain([min, max]).range([0,width]);
+
+            var rectHeight = d3.max([10, height/(dataSet.length +1)]);
+            svg.selectAll("rect").data(dataSet)
+                .enter()
+                .append("rect")
+                .attr("x", 20)
+                .attr("y", function(d, i) {
+                    return i * rectHeight;
+                })
+                .attr("width", function(d) {
+                    return linear(d);
+                })
+                .attr("height", rectHeight - 2)
+                .attr("fill", "steelblue");
+
+                //Define axis
+                var axis = d3.svg.axis().scale(linear).orient("bottom").ticks(10);
+                svg.append("g").attr("class", "axis").attr("transform", "translate(20,250)").call(axis);
+        }
+    </script>
+    <style>
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+        .axis text{
+            font-family: sans-serif;
+            font-size: 11px
+        }
+    </style>
+</head>
+<body >
+    <div class="container">
+        <h1>D3 Scale System</h1>
+        <hr>
+        <div>
+            <button class="btn btn-primary" onclick="doChart()">Make Chart</button>
+            <svg style="width: 300px; height: 300px" id="linear"></svg>
+        </div>
+    </div>
+</body>
+</html>

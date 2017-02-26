@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Demo03</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="js/d3.min.js"></script>
+    <script>
+        function doChart() {
+            var width = 300;
+            var height= 300;
+            var svg = d3.select("body").select("#firstChart").append("svg");
+            svg.attr("width", width);
+            svg.attr("height", height);
+
+            //Draw Bars
+            var dataSet = [250, 210, 170, 130, 90];
+            var rectHeight = 25;
+            svg.selectAll("rect").data(dataSet)
+                .enter()
+                .append("rect")
+                .attr("x",20)
+                .attr("y", function(d,  i){
+                    return i * rectHeight;
+                })
+                .attr("width", function(d) {
+                    return d;
+                })
+                .attr("height", rectHeight - 2)
+                .attr("fill", "steelblue")
+        }
+
+        function doChart2() {
+            var svg = d3.select("body").select("#secondChart").select("#mysvg");
+            var dataSet = [250, 210, 170, 130, 90];
+            var rectWidth = 25;
+            var svgHeight =parseInt(svg.style("height"));
+            svg.selectAll("rect").data(dataSet)
+               .enter()
+               .append("rect")
+               .attr("x", function(d, i) {
+                    return   20 + i*rectWidth;
+               })
+               .attr("y", function(d, i) {
+                    return svgHeight-d;
+               })
+               .attr("width", rectWidth-2)
+               .attr("height", function(d, i){
+                    return d;
+               })
+               .attr("fill", "red")
+        }
+    </script>
+    
+</head>
+<body >
+    <div class="container" >
+        <h1>Make a Barchart</h1>
+        <hr>
+        <button class="btn btn-primary" onclick="doChart()">Make barChart</button>
+        <div id="firstChart" style="margin: 20px"></div>
+        <hr>
+
+        <button class="btn btn-primary" onclick="doChart2()">Make Columnchart</button>
+        <div id="secondChart" style="margin: 20px">
+            <svg style="width: 300px; height: 300px" id="mysvg"></svg>
+        </div>
+    </div>
+    
+</body>
+</html>

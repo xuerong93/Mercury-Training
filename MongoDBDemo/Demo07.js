@@ -3,8 +3,8 @@ var MongoClient = require("mongodb").MongoClient;
 
 var url= "mongodb://localhost:27017/mercury";
 
-var deleteOneRecord =function(db, name, callback){
-    var collection=db.collection("emp");
+var deleteOneRecord = function(db, name, callback){
+    var collection = db.collection("emp");
     collection.deleteOne({
         name: name
     }, function(err, result){

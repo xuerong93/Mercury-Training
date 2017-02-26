@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Demo02</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <script src="js/d3.min.js"></script>
+    <script>
+        function doChart() {
+            var svg = d3.select("svg");
+            var w = parseInt(svg.style("width"));
+            var h = parseInt(svg.style("height"));
+            var r = h/2;
+            var color = d3.scale.category20c();
+
+            var data = [
+                {label: "Category A", value: 20},
+                {label: "Category B", value: 50},
+                {label: "Category C", value: 30},
+                {label: "Category D", value: 40}
+            ];
+
+            var vis = d3.select("#pie").data([data])
+                        .attr("width", w).attr("height", h)
+                        .append("g").attr("transform", "translate(" + r + "," + r + ")");  //g is graph
+            var pie = d3.layout.pie().value(function(d) {   //change data into pie representation
+                return d.value;
+            })
+
+            var arc = d3.svg.arc().outerRadius(r).innerRadius(10);
+
+            var arcs = vis.selectAll("g.slice").data(pie).enter().append("svg:g").attr("class", "slice");
+            arcs.append("svg:path")
+                .attr("fill", function(d, i) {
+                    return color(i);
+                })
+                .attr("d", function(d) {
+                    //console.log(arc(d));
+                    return arc(d);
+                });
+
+            arcs.append("text")
+                .attr("transform", function(d) {
+                    d.innerRadius =0;
+                    d.outerRadius = r;
+                    return "translate(" + arc.centroid(d) + ")";
+                })
+                .attr("text-anchor", "middle")
+                .text(function(d, i) {
+                    return data[i].label;
+                });
+        }
+    </script>
+    <style>
+        .slice text {
+            font-size: 16px;
+            font-family: Arial;
+        }
+    </style>
+</head>
+<body >
+    <div class="container">
+        <h1>D3 Scale System</h1>
+        <hr>
+        <div>
+            <button class="btn btn-primary" onclick="doChart()">Make Pie Chart</button>
+            <svg style="width: 400px; height: 400px" id="pie"></svg>
+        </div>
+    </div>
+</body>
+</html>

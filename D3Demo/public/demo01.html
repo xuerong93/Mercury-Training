@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo01</title>
+    <link rel = "stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5shiv.js"></script>
+    <![endif]-->
+    <script src="js/d3.min.js"></script>
+    <script>
+        function doChange() {
+            var p = d3.select("body").selectAll("p").html("<b>Changed by D3</b>");
+            p.style("color", "red");
+            p.style("font-size", "20px");
+        }
+        function dataChange() {
+            var str = "Alice";
+            var body = d3.select("body");
+            var h5 = body.selectAll("h5");
+            h5.datum(str);   //biind only one data,if array, bind all the array, not for each element
+            h5.text(function(d, i){
+                return "Element " + i + ": " + d;
+            });
+        }
+        function bindData() {
+            var dataSet =[ "I like dog", "I like cat", "I like fish", "I like tiger"];
+            var body = d3.select("body");
+            var li = body.select("ul").selectAll("li");
+            var temp = li.data(dataSet);
+            temp.text(function(d) {             //element.length == data.length  => update; element.length < data.length =>update + enter  ;  element.length > data.length =>update + exit
+                return d;
+            });
+            temp.enter().append("li").text(function(d, i) {
+                return d;
+            });
+
+            // var dataSet =[ "I like dog", "I like cat"];
+            // var body = d3.select("body");
+            // var li = body.select("ul").selectAll("li");
+            // var temp = li.data(dataSet);
+            // temp.text(function(d) {             //element.length == data.length  => update; element.length < data.length =>update + enter  ;  element.length > data.length =>update + exit
+            //     return d;
+            // });
+            // exit.remove();
+        }
+    </script>
+</head>
+<body>
+    <div class="container">    <!--control in div-->
+        <h1>Basic D3 Selector</h1>
+        <hr>
+        <h2>Selector</h2>
+        <p>Hello World!</p>
+        <p>Hello World!</p>
+        <button class="btn btn-primary" onclick="doChange()">Change</button>
+        <hr>
+        <h2>Bind data by datum()</h2>
+        <h5>Apple</h5>
+        <h5>Pear</h5>
+        <h5>Banana</h5>
+        <button class="btn btn-primary" onclick="dataChange()">Change Data</button>
+        <hr>
+        <h2>Bind Data by data()</h2>
+        <ul>
+            <li>Item 1</li>
+            <li>Item 2</li>
+            <li>Item 3</li>
+        </ul>        
+        <button class="btn btn-primary" onclick="bindData()"> Bind data</button>
+    </div>
+</body>
+</html>

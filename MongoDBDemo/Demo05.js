@@ -3,8 +3,8 @@ var MongoClient = require("mongodb").MongoClient;
 
 var url= "mongodb://localhost:27017/mercury";
 
-var updateByName =function(db, name, callback){
-    var collection=db.collection("emp");
+var updateByName = function(db, name, callback){
+    var collection = db.collection("emp");
     collection.updateOne({
         name: name
     }, {
